@@ -3,12 +3,11 @@ package com.example.cellanalyzer
 import android.Manifest
 import android.content.pm.PackageManager
 import android.os.Bundle
-import android.telephony.CellInfo
-import android.telephony.CellInfoLte
-import android.telephony.TelephonyManager
+import android.telephony.*
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
+
 
 class MainActivity : AppCompatActivity() {
 
@@ -54,34 +53,56 @@ class MainActivity : AppCompatActivity() {
                 Manifest.permission.ACCESS_FINE_LOCATION
             ) == PackageManager.PERMISSION_GRANTED
         ) {
-            val cellInfoList: List<CellInfo>? = telephonyManager.allCellInfo
+            val cellInfoList = telephonyManager.allCellInfo
 
             if (!cellInfoList.isNullOrEmpty()) {
                 val info = StringBuilder()
 
                 for (cellInfo in cellInfoList) {
-                    if (cellInfo is CellInfoLte) {
-                        val cellSignalStrengthLte = cellInfo.cellSignalStrength
-                        val cellIdentityLte = cellInfo.cellIdentity
+                    when (cellInfo) {
+                        is CellInfoLte -> {
+                            val cellSignalStrengthLte = cellInfo.cellSignalStrength
+                            val cellIdentityLte = cellInfo.cellIdentity
 
-                        if (cellInfo.isRegistered) {
-                            info.append("Connected Cell:\n")
-                        } else {
-                            info.append("Nearby Cell:\n")
+                            if (cellInfo.isRegistered) {
+                                info.append("Connected LTE Cell:\n")
+                            } else {
+                                info.append("Nearby LTE Cell:\n")
+                            }
+
+                            val rssi = cellSignalStrengthLte.dbm
+                            val rsrp = cellSignalStrengthLte.rsrp
+                            val rsrq = cellSignalStrengthLte.rsrq
+                            val band = cellIdentityLte.earfcn
+
+                            info.append("LTE: RSSI: $rssi dBm\n")
+                            info.append("LTE: RSRP: $rsrp dBm\n")
+                            info.append("LTE: RSRQ: $rsrq dB\n")
+                            info.append("LTE: EARFCN: $band\n\n")
                         }
+                        is CellInfoNr -> {
+                            val cellSignalStrengthNr = cellInfo.cellSignalStrength
+                            val signalStrengthNr = cellInfo.cellSignalStrength as CellSignalStrengthNr
+                            val cellIdentityNr = cellInfo.cellIdentity as CellIdentityNr
 
-                        val rssi = cellSignalStrengthLte.dbm
-                        val rsrp = cellSignalStrengthLte.rsrp
-                        val rsrq = cellSignalStrengthLte.rsrq
-                        val band = cellIdentityLte.earfcn
+                            if (cellInfo.isRegistered) {
+                                info.append("Connected 5G NR Cell:\n")
+                            } else {
+                                info.append("Nearby 5G NR Cell:\n")
+                            }
 
-                        info.append("RSSI: $rssi dBm\n")
-                        info.append("RSRP: $rsrp dBm\n")
-                        info.append("RSRQ: $rsrq dB\n")
-                        info.append("Band: $band\n\n")
+                            val ssRsrp = signalStrengthNr.ssRsrp
+                            val ssRsrq = signalStrengthNr.ssRsrq
+                            val ssSinr = signalStrengthNr.ssSinr
+                            val nrarfcn = cellIdentityNr.nrarfcn
+
+                            info.append("NR: RSRP: $ssRsrp dBm\n")
+                            info.append("NR: RSRQ: $ssRsrq dB\n")
+                            info.append("NR: SINR: $ssSinr dB\n")
+                            info.append("NR: ARFCN: $nrarfcn\n\n")
+                        }
                     }
                 }
-
 
                 textView.text = info.toString()
             } else {
@@ -89,8 +110,6 @@ class MainActivity : AppCompatActivity() {
             }
         }
     }
-
-
 
     override fun onRequestPermissionsResult(
         requestCode: Int,
