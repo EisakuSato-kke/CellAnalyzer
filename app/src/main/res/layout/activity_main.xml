@@ -15,5 +15,12 @@
         android:text="Network information will appear here."
         android:textSize="16sp"
         android:padding="8dp" />
+
+    <Button
+        android:id="@+id/updateButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Update"
+        android:layout_margin="16dp" />
 </LinearLayout>
 </ScrollView>

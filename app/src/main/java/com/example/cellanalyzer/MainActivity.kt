@@ -7,6 +7,7 @@ import android.telephony.*
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
+import android.widget.Button
 
 fun Int.intMax2NA(): String {
     return if (this == Integer.MAX_VALUE) "N/A" else this.toString()
@@ -16,12 +17,14 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var textView: TextView
     private val PERMISSION_REQUEST_CODE = 100
+    private lateinit var updateButton: Button
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
         textView = findViewById(R.id.textView)
+        updateButton = findViewById(R.id.updateButton)
 
         // 権限の確認
         if (ActivityCompat.checkSelfPermission(
@@ -44,6 +47,13 @@ class MainActivity : AppCompatActivity() {
                 PERMISSION_REQUEST_CODE
             )
         } else {
+            getNetworkInfo()
+            setupButton()
+        }
+    }
+
+    private fun setupButton() {
+        updateButton.setOnClickListener {
             getNetworkInfo()
         }
     }
@@ -121,9 +131,6 @@ class MainActivity : AppCompatActivity() {
                         val bands = (cellIdentityNr.bands).joinToString(",")
                         val mcc = cellIdentityNr.mccString // Mobile Country Code
                         val mnc = cellIdentityNr.mncString // Mobile Network Code
-
-
-
 
                         info.append("SS-RSRP: $ssRsrp dBm\n")
                         info.append("SS-RSRQ: $ssRsrq dB\n")
