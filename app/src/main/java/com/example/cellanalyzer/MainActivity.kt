@@ -8,6 +8,9 @@ import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 
+fun Int.intMax2NA(): String {
+    return if (this == Integer.MAX_VALUE) "N/A" else this.toString()
+}
 
 class MainActivity : AppCompatActivity() {
 
@@ -69,24 +72,33 @@ class MainActivity : AppCompatActivity() {
                             info.append("Nearby LTE Cell:\n")
                         }
 
-                        val rssi = cellSignalStrengthLte.dbm
-                        val rsrp = cellSignalStrengthLte.rsrp
-                        val rsrq = cellSignalStrengthLte.rsrq
-                        val earfcn = cellIdentityLte.earfcn
+                        // cellSignalStrengthLte
+                        val rssi = cellSignalStrengthLte.dbm.intMax2NA()
+                        val rsrp = cellSignalStrengthLte.rsrp.intMax2NA()
+                        val rsrq = cellSignalStrengthLte.rsrq.intMax2NA()
+                        val cqi = cellSignalStrengthLte.cqi.intMax2NA()
+                        val snr = cellSignalStrengthLte.rssnr.intMax2NA()
+
+
+                        // cellIdentityLte
+                        val earfcn = cellIdentityLte.earfcn.intMax2NA()
                         val band = (cellIdentityLte.bands).joinToString(",")
-                        val bandwidth = cellIdentityLte.bandwidth
+                        val bandwidth = cellIdentityLte.bandwidth.intMax2NA()
                         val NWoperator = cellIdentityLte.mobileNetworkOperator
+                        val mcc = cellIdentityLte.mccString // Mobile Country Code
+                        val mnc = cellIdentityLte.mncString // Mobile Network Code
 
                         info.append("RSSI: $rssi dBm\n")
                         info.append("RSRP: $rsrp dBm\n")
                         info.append("RSRQ: $rsrq dB\n")
+                        info.append("CQI: $cqi \n")
+                        info.append("RS-SNR: $snr dB\n")
                         info.append("EARFCN: $earfcn\n")
                         info.append("BAND: $band\n")
                         info.append("BANDWIDTH: $bandwidth\n")
                         info.append("NetworkOperator: $NWoperator\n\n")
                     }
                     is CellInfoNr -> {
-                        val cellSignalStrengthNr = cellInfo.cellSignalStrength
                         val signalStrengthNr = cellInfo.cellSignalStrength as CellSignalStrengthNr
                         val cellIdentityNr = cellInfo.cellIdentity as CellIdentityNr
 
@@ -95,16 +107,31 @@ class MainActivity : AppCompatActivity() {
                         } else {
                             info.append("Nearby 5G NR Cell:\n")
                         }
+                        // signalStrengthNr
+                        val ssRsrp = signalStrengthNr.ssRsrp.intMax2NA()
+                        val ssRsrq = signalStrengthNr.ssRsrq.intMax2NA()
+                        val ssSinr = signalStrengthNr.ssSinr.intMax2NA()
+                        val cqi = (signalStrengthNr.csiCqiReport).joinToString(",")
+                        val csiRsrp = signalStrengthNr.csiRsrp.intMax2NA()
+                        val csiRsrq = signalStrengthNr.csiRsrq.intMax2NA()
+                        val csiSinr = signalStrengthNr.csiSinr.intMax2NA()
 
-                        val ssRsrp = signalStrengthNr.ssRsrp
-                        val ssRsrq = signalStrengthNr.ssRsrq
-                        val ssSinr = signalStrengthNr.ssSinr
-                        val nrarfcn = cellIdentityNr.nrarfcn
+                        // cellIdentityNr
+                        val nrarfcn = cellIdentityNr.nrarfcn.intMax2NA()
                         val bands = (cellIdentityNr.bands).joinToString(",")
+                        val mcc = cellIdentityNr.mccString // Mobile Country Code
+                        val mnc = cellIdentityNr.mncString // Mobile Network Code
 
-                        info.append("RSRP: $ssRsrp dBm\n")
-                        info.append("RSRQ: $ssRsrq dB\n")
-                        info.append("SINR: $ssSinr dB\n")
+
+
+
+                        info.append("SS-RSRP: $ssRsrp dBm\n")
+                        info.append("SS-RSRQ: $ssRsrq dB\n")
+                        info.append("SS-SINR: $ssSinr dB\n")
+                        info.append("CQI: $cqi \n")
+                        info.append("CSI-RSRP: $csiRsrp dB\n")
+                        info.append("CSI-RSRQ: $csiRsrq dB\n")
+                        info.append("CSI-Sinr: $csiSinr dB\n")
                         info.append("ARFCN: $nrarfcn\n")
                         info.append("BAND: $bands\n\n")
                     }
