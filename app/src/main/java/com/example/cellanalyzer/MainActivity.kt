@@ -73,7 +73,7 @@ class MainActivity : AppCompatActivity() {
                         val rsrp = cellSignalStrengthLte.rsrp
                         val rsrq = cellSignalStrengthLte.rsrq
                         val earfcn = cellIdentityLte.earfcn
-                        val band = cellIdentityLte.bands
+                        val band = (cellIdentityLte.bands).joinToString(",")
                         val bandwidth = cellIdentityLte.bandwidth
                         val NWoperator = cellIdentityLte.mobileNetworkOperator
 
@@ -100,7 +100,7 @@ class MainActivity : AppCompatActivity() {
                         val ssRsrq = signalStrengthNr.ssRsrq
                         val ssSinr = signalStrengthNr.ssSinr
                         val nrarfcn = cellIdentityNr.nrarfcn
-                        val bands = cellIdentityNr.bands
+                        val bands = (cellIdentityNr.bands).joinToString(",")
 
                         info.append("RSRP: $ssRsrp dBm\n")
                         info.append("RSRQ: $ssRsrq dB\n")
